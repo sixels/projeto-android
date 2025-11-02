@@ -32,7 +32,7 @@
             android:orientation="horizontal"
             android:gravity="center">
             <TextView
-                android:drawableLeft="@drawable/delete_forever_24px"
+                android:drawableLeft="@drawable/login_24px"
                 android:drawableTint="@color/red_500"
                 android:clickable="true"
                 android:textStyle="bold"
@@ -41,7 +41,7 @@
                 android:layout_height="48dp"
                 android:gravity="center"
                 android:textColor="@color/red_500"
-                android:text="Sair" />
+                android:text=" Sair" />
         </LinearLayout>
 
     </com.google.android.material.navigation.NavigationView>

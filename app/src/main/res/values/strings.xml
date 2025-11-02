@@ -10,4 +10,10 @@
     <string name="menu_home">Home</string>
     <string name="menu_historico">Historico</string>
     <string name="menu_config">Configurações</string>
+    <string-array name="periodos">
+        <item>Hoje</item>
+        <item>Esta semana</item>
+        <item>Este mês</item>
+        <item>Este ano</item>
+    </string-array>
 </resources>
