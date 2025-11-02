@@ -29,10 +29,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:clickable="true"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center">
             <TextView
+                android:drawableLeft="@drawable/delete_forever_24px"
+                android:drawableTint="@color/red_500"
+                android:clickable="true"
+                android:textStyle="bold"
                 android:id="@+id/logout"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:gravity="center"
                 android:textColor="@color/red_500"
