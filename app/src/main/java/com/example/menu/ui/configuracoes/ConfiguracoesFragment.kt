@@ -29,10 +29,10 @@ class ConfiguracoesFragment : Fragment() {
         _binding = FragmentConfiguracoesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textConfiguracoes
-        slideshowViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+        //val textView: TextView = binding.textConfiguracoes
+        //slideshowViewModel.text.observe(viewLifecycleOwner) {
+        //    textView.text = it
+        //}
         return root
     }
 

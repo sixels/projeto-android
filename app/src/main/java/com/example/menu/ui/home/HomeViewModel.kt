@@ -7,6 +7,6 @@ import androidx.lifecycle.ViewModel
 class HomeViewModel : ViewModel() {
 
     private val _text =
-        "This is home Fragment"
+        "Severa"
     val text: String = _text
 }
