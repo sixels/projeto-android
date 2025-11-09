@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.appruido.ui.screens.HistoricoScreen
 import com.example.appruido.ui.screens.Home
 import com.example.appruido.ui.screens.SettingsScreen
 
@@ -24,6 +25,9 @@ fun AppNavHost(
     ) {
         composable(Screen.Home.route) {
             Home(name = "Android")
+        }
+        composable(Screen.Historico.route) {
+            HistoricoScreen()
         }
         composable(Screen.Settings.route) {
             SettingsScreen()
