@@ -26,10 +26,12 @@ class MainActivity : ComponentActivity() {
                 val currentRoute = navBackStackEntry?.destination?.route ?: Screen.Home.route
 
                 val currentScreenTitle = when (currentRoute) {
-                    Screen.Home.route -> "Home"
-                    Screen.Settings.route -> "Settings"
+                    Screen.Home.route -> "Tela inicial"
+                    Screen.Settings.route -> "Configurações"
+                    Screen.Historico.route -> "Histórico"
                     else -> "App Ruido"
                 }
+
 
                 MenuScaffold(
                     navController = navController,
