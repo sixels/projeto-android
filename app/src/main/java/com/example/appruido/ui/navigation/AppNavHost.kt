@@ -1,5 +1,8 @@
 package com.example.appruido.ui.navigation
 
+import android.os.Build
+import androidx.activity.ComponentActivity
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
@@ -11,8 +14,10 @@ import com.example.appruido.ui.screens.HistoricoScreen
 import com.example.appruido.ui.screens.Home
 import com.example.appruido.ui.screens.SettingsScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavHost(
+    activity: ComponentActivity,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -24,7 +29,7 @@ fun AppNavHost(
         exitTransition = { ExitTransition.None }
     ) {
         composable(Screen.Home.route) {
-            Home(name = "Android")
+            Home(activity = activity)
         }
         composable(Screen.Historico.route) {
             HistoricoScreen()
