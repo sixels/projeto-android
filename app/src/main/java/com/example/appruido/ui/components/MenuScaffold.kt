@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,6 +45,7 @@ fun MenuScaffold(
     navController: NavHostController,
     currentRoute: String,
     currentScreenTitle: String,
+    onSignOutClicked: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -78,6 +82,22 @@ fun MenuScaffold(
                     )
 
                     NavigationDrawerItem(
+                        label = { Text("Histórico") },
+                        selected = currentRoute == Screen.Historico.route,
+                        icon = { Icon(Icons.Outlined.Analytics, contentDescription = null) },
+                        onClick = {
+                            navController.navigate(Screen.Historico.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                            scope.launch { drawerState.close() }
+                        }
+                    )
+
+                    NavigationDrawerItem(
                         label = { Text("Settings") },
                         selected = currentRoute == Screen.Settings.route,
                         icon = { Icon(Icons.Outlined.Settings, contentDescription = null) },
@@ -92,6 +112,21 @@ fun MenuScaffold(
                             scope.launch { drawerState.close() }
                         }
                     )
+
+                    Spacer(Modifier.height(12.dp))
+                    HorizontalDivider()
+                    Spacer(Modifier.height(12.dp))
+
+                    NavigationDrawerItem(
+                        label = { Text("Sair") },
+                        selected = false,
+                        icon = { Icon(Icons.AutoMirrored.Outlined.Logout, contentDescription = "Sair") },
+                        onClick = {
+                            onSignOutClicked()
+                            scope.launch { drawerState.close() }
+                        }
+                    )
+                    Spacer(Modifier.height(12.dp))
                 }
             }
         },

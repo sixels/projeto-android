@@ -1,18 +1,18 @@
 package com.example.appruido.ui.theme
 import androidx.compose.ui.graphics.Color
 
-val md_theme_light_primary = Color(0xFFC00018)
+val md_theme_light_primary = Color(0xFFA61E2F)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_primaryContainer = Color(0xFFFFDAD7)
 val md_theme_light_onPrimaryContainer = Color(0xFF410004)
 val md_theme_light_secondary = Color(0xFF006D39)
 val md_theme_light_onSecondary = Color(0xFFFFFFFF)
-val md_theme_light_secondaryContainer = Color(0xFF9AF6B3)
+val md_theme_light_secondaryContainer = Color(0xFFFF7D7D)
 val md_theme_light_onSecondaryContainer = Color(0xFF00210D)
-val md_theme_light_tertiary = Color(0xFF924275)
+val md_theme_light_tertiary = Color(0xFFE57C7C)
 val md_theme_light_onTertiary = Color(0xFFFFFFFF)
 val md_theme_light_tertiaryContainer = Color(0xFFFFD8EA)
-val md_theme_light_onTertiaryContainer = Color(0xFF3B002B)
+val md_theme_light_onTertiaryContainer = Color(0xFFD76687)
 val md_theme_light_error = Color(0xFFBA1A1A)
 val md_theme_light_onError = Color(0xFFFFFFFF)
 val md_theme_light_errorContainer = Color(0xFFFFDAD6)
