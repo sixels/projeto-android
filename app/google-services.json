@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "72005357907",
+    "project_id": "appruido",
+    "storage_bucket": "appruido.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:72005357907:android:235609746a8d4c36d1d1a6",
+        "android_client_info": {
+          "package_name": "com.example.appruido"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "72005357907-2mj7jomrivn9cr1a74d9jjp8hlfh7te4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.appruido",
+            "certificate_hash": "7f90a98fa8c3109f48aecff6373af36cb34e9b1d"
+          }
+        },
+        {
+          "client_id": "72005357907-eigeqs72duvc7odq5qhs2d4krvegt3fo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsv7es0m1BeZmJ9Q1aQzfVGwomie2ztAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "72005357907-eigeqs72duvc7odq5qhs2d4krvegt3fo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

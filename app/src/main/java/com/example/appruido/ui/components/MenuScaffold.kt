@@ -10,7 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerValue
@@ -68,22 +67,6 @@ fun MenuScaffold(
                         icon = { Icon(Icons.Outlined.Home, contentDescription = null) },
                         onClick = {
                             navController.navigate(Screen.Home.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                            scope.launch { drawerState.close() }
-                        }
-                    )
-
-                    NavigationDrawerItem(
-                        label = { Text("Histórico") },
-                        selected = currentRoute == Screen.Historico.route,
-                        icon = { Icon(Icons.Outlined.Analytics, contentDescription = null) },
-                        onClick = {
-                            navController.navigate(Screen.Historico.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
                                 }

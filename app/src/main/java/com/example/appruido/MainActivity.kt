@@ -1,5 +1,6 @@
 package com.example.appruido
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,7 +34,16 @@ class MainActivity : ComponentActivity() {
                 MenuScaffold(
                     navController = navController,
                     currentRoute = currentRoute,
-                    currentScreenTitle = currentScreenTitle
+                    currentScreenTitle = currentScreenTitle,
+                    onSignOutClicked = {
+                        val intent = Intent(this, LoginActivity::class.java)
+                        intent.addFlags(
+                            Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                    Intent.FLAG_ACTIVITY_NEW_TASK
+                        )
+                        startActivity(intent)
+                        finish()
+                    },
                 ) { innerPadding ->
                     AppNavHost(
                         navController = navController,
