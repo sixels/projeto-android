@@ -1,7 +1,15 @@
 package com.example.appruido.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -15,17 +23,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material3.*
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 
 @Composable
 fun HistoricoScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Página histórico")
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Column(
+                modifier = Modifier,
+                 verticalArrangement = Arrangement.spacedBy(15.dp)
+            ) {
+                Text( text = "Selecione o período que deseja:", fontSize = 18.sp)
+                dropdown_menu() //caixa de opções de periodo de tempo
+
+            }
+
+        }
+
+
+
     }
-    dropdown_menu() //caixa de opções de periodo de tempo
+
+
 
 
 }
@@ -49,11 +80,14 @@ fun dropdown_menu(){
             value = periodo,
             onValueChange = {},
             readOnly = true,
+            singleLine = true,
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
             },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                .width(170.dp)
+
         )
 
         ExposedDropdownMenu(
@@ -62,7 +96,7 @@ fun dropdown_menu(){
         ) {
             DropdownMenuItem(
                 text = {
-                    Text(text = "Periodo 1")},
+                    Text(text = "Hoje")},
                 onClick = {
                     periodo = "Periodo 1"
                     isExpanded = false
