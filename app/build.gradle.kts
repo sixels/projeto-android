@@ -76,4 +76,10 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
     implementation(libs.play.services.auth)
+
+
+    implementation("androidx.compose.ui:ui:1.9.4")
+    implementation("io.github.bytebeats:compose-charts:0.2.1")
+
+
 }

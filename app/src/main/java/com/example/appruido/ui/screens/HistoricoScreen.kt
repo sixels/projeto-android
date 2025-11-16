@@ -1,5 +1,8 @@
 package com.example.appruido.ui.screens
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,10 +44,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.appruido.R
+import androidx.compose.ui.graphics.Color
+import me.bytebeats.views.charts.pie.PieChart
+import me.bytebeats.views.charts.pie.PieChartData
 
+
+val cor1Azul = Color(0xFF2196F3)
+val cor2Amarelo = Color(0xFFFFD54F)
+val cor3Laranja = Color(0xFFFFA14F)
+val cor4Vermelho = Color(0xFFF45559)
 @Composable
 fun HistoricoScreen() {
+
 
     Column(
         modifier = Modifier
@@ -74,7 +86,32 @@ fun HistoricoScreen() {
         ) {
             // ---  LISTA ROLÁVEL:  ---
             item {
-                Grafico()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(size = 15.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Grafico()
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 10.dp),
+                    horizontalArrangement = Arrangement.Start
+                ){
+                    Column(
+
+                    ) {
+                        Text("Intervalos de níveis de decibeis:")
+                        Text("Baixo: 0db - 35db", color = cor1Azul)
+                        Text("Moderado: 35db - 65db", color = cor2Amarelo)
+                        Text("Perigo: 65dp - 100db ", color = cor3Laranja)
+                        Text("Extremo perigo: 100db - 120db ", color = cor4Vermelho)
+                    }
+
+                }
             }
             item {
                 ResumoCard {
@@ -126,22 +163,17 @@ fun HistoricoScreen() {
 
 @Composable
 fun Grafico(){
-    val imageId = R.drawable.grafico_img
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(350.dp)
-            .clip(RoundedCornerShape(size = 15.dp)),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(id = imageId),
-            contentDescription = "Gráfico",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Fit
-        )
+    PieChart(
+        pieChartData = PieChartData(
+            slices = listOf(
+                PieChartData.Slice(50.0f,cor1Azul ),
+                PieChartData.Slice(35.0f,cor2Amarelo),
+                PieChartData.Slice(15.0f,cor3Laranja),
+                PieChartData.Slice(5.0f,cor4Vermelho)
+        ),
+    )
+    )
 
-    }
 }
 
 @Composable

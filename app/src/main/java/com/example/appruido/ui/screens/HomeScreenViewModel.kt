@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.stateIn
 
-class HomeScreenViewModel : ViewModel() {
+class
+HomeScreenViewModel : ViewModel() {
 
     val decibels: StateFlow<Double> =
         AudioRepository.decibels
