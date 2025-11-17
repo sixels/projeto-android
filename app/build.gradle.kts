@@ -7,6 +7,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("/home/teles/AndroidStudioProjects/AppRuido/app-keystore.jks")
+            storePassword = "123456"
+            keyAlias = "key0"
+            keyPassword = "123456"
+        }
+    }
     namespace = "com.example.appruido"
     compileSdk {
         version = release(36)

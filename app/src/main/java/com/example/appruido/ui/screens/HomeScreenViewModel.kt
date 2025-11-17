@@ -1,6 +1,5 @@
 package com.example.appruido.ui.screens
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appruido.repository.AudioRepository
@@ -34,8 +33,6 @@ HomeScreenViewModel : ViewModel() {
         // Every time decibels emits, update the history buffer
         viewModelScope.launch {
             decibels.collect { value ->
-                Log.d("RUIDO_DB", "value: $value")
-
                 var dbValue = value.absoluteValue
                 if (dbValue.isInfinite()) {
                     dbValue = 0.0
