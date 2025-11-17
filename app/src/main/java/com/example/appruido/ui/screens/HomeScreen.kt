@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -38,6 +42,7 @@ import ir.ehsannarmani.compose_charts.LineChart
 import ir.ehsannarmani.compose_charts.models.AnimationMode
 import ir.ehsannarmani.compose_charts.models.DividerProperties
 import ir.ehsannarmani.compose_charts.models.DrawStyle
+import ir.ehsannarmani.compose_charts.models.GridProperties
 import ir.ehsannarmani.compose_charts.models.HorizontalIndicatorProperties
 import ir.ehsannarmani.compose_charts.models.LabelHelperProperties
 import ir.ehsannarmani.compose_charts.models.LabelProperties
@@ -54,17 +59,22 @@ fun Home(
     viewModel: HomeScreenViewModel = viewModel(),
 ) {
     val db by viewModel.decibels.collectAsState()
-    val history = viewModel.history.collectAsStateWithLifecycle().value
+    val history by viewModel.history.collectAsStateWithLifecycle()
     val isRunning by viewModel.isRunning.collectAsState()
 
     val primaryColor = MaterialTheme.colorScheme.primary
     val foreColor = MaterialTheme.colorScheme.onBackground
 
+    var dbMeasure = db.absoluteValue
+    if (db.isInfinite()) {
+        dbMeasure = 0.0
+    }
+
     Column(
-        modifier = modifier,
+        modifier = modifier.verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        GaugeMeasure(db)
+        GaugeMeasure(dbMeasure)
         Button(
             onClick = {
                 if (!isRunning) {
@@ -83,7 +93,11 @@ fun Home(
             Text(if (isRunning) "Pausar Medição" else "Iniciar Medição")
         }
         LineChart(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp, vertical = 22.dp),
+            modifier = Modifier
+                .sizeIn(maxWidth = 700.dp)
+                .fillMaxWidth()
+                .requiredHeight(320.dp)
+                .padding(start = 22.dp, end = 22.dp, top = 40.dp),
 
             data = remember(history) {
                 listOf(
@@ -117,19 +131,20 @@ fun Home(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                 ),
-//                count = TODO(),
-//                position = TODO(),
-//                padding = TODO(),
-//                contentBuilder = TODO(),
-//                indicators = TODO(),
             ),
             dividerProperties = DividerProperties(enabled = false),
-//            gridProperties = GridProperties(enabled = false),
+            gridProperties = GridProperties(
+                enabled = true,
+                xAxisProperties = GridProperties.AxisProperties(
+                    enabled = true,
+                    color = SolidColor(foreColor.copy(alpha = 0.2f)),
+                ),
+                yAxisProperties = GridProperties.AxisProperties(
+                    enabled = true,
+                    color = SolidColor(foreColor.copy(alpha = 0.2f)),
+                ),
+            ),
             popupProperties = PopupProperties(enabled = false),
-//            labelHelperPadding = TODO(),
-//            textMeasurer = TODO(),
-//            popupProperties = TODO(),
-//            dotsProperties = TODO(),
         )
     }
 }
@@ -153,12 +168,9 @@ fun GaugeMeasure(measure: Double = 0.0) {
 
 @Composable
 fun GaugeMeter(measure: Double) {
-    var mMeasure = measure.absoluteValue
-    if (mMeasure.isInfinite()) {
-        mMeasure = 0.0
-    }
+
     val animatedValue by animateFloatAsState(
-        targetValue = mMeasure.toFloat(),
+        targetValue = measure.toFloat(),
         animationSpec = tween(
             durationMillis = 300,
             easing = LinearOutSlowInEasing
@@ -180,8 +192,10 @@ fun GaugeMeter(measure: Double) {
             modifier = Modifier.padding(28.dp),
             maxValue = 120f,
             inputValue = animatedValue,
-            progressColors = listOf(Color.Green, Color.Yellow, Color.Yellow,
-                Color.Red),
+            progressColors = listOf(
+                Color.Green, Color.Yellow, Color.Yellow,
+                Color.Red
+            ),
             label = label,
         )
     }

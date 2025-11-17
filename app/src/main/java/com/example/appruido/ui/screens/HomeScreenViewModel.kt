@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 class
 HomeScreenViewModel : ViewModel() {
@@ -34,8 +35,15 @@ HomeScreenViewModel : ViewModel() {
         viewModelScope.launch {
             decibels.collect { value ->
                 Log.d("RUIDO_DB", "value: $value")
+
+                var dbValue = value.absoluteValue
+                if (dbValue.isInfinite()) {
+                    dbValue = 0.0
+                }
+
+
                 val updated = _history.value
-                    .plus(value)
+                    .plus(dbValue)
                     .takeLast(25)
 
                 _history.value = updated

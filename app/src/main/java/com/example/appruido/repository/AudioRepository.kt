@@ -62,7 +62,7 @@ object AudioRepository {
                 val read = recorder.read(buffer, 0, buffer.size)
                 if (read > 0) {
                     val rms = calculateRms(buffer, read)
-                    val db = 20 * log10(rms / 1.0)
+                    var db = 20 * log10(rms / 1.0)
                     Log.d(TAG, "Rms: $rms, dB: $db")
                     _decibels.value = db
                 }
