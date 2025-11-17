@@ -56,6 +56,8 @@ class LoginActivity : ComponentActivity() {
         Log.d(TAG, "onCreate")
 
 
+        goToMainActivity()
+
         enableEdgeToEdge()
         setContent {
             AppRuidoTheme {

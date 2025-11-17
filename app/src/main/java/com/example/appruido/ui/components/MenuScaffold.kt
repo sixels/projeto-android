@@ -12,9 +12,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Analytics
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -66,9 +65,9 @@ fun MenuScaffold(
                     Spacer(Modifier.height(12.dp))
 
                     NavigationDrawerItem(
-                        label = { Text("Home") },
+                        label = { Text("Medição") },
                         selected = currentRoute == Screen.Home.route,
-                        icon = { Icon(Icons.Outlined.Home, contentDescription = null) },
+                        icon = { Icon(Icons.Outlined.Speed, contentDescription = null) },
                         onClick = {
                             navController.navigate(Screen.Home.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
@@ -98,7 +97,7 @@ fun MenuScaffold(
                     )
 
                     NavigationDrawerItem(
-                        label = { Text("Settings") },
+                        label = { Text("Configurações") },
                         selected = currentRoute == Screen.Settings.route,
                         icon = { Icon(Icons.Outlined.Settings, contentDescription = null) },
                         onClick = {

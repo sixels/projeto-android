@@ -78,8 +78,6 @@ dependencies {
     implementation(libs.play.services.auth)
 
 
-    implementation("androidx.compose.ui:ui:1.9.4")
-    implementation("io.github.bytebeats:compose-charts:0.2.1")
-
-
+    implementation(libs.bytebeats.compose.charts)
+    implementation ("io.github.ehsannarmani:compose-charts:0.2.0")
 }

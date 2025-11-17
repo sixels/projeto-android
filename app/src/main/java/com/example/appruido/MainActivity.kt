@@ -1,6 +1,5 @@
 package com.example.appruido
 
-import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -11,8 +10,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.appruido.ui.components.MenuScaffold
@@ -36,7 +33,7 @@ class MainActivity : ComponentActivity() {
                 val currentRoute = navBackStackEntry?.destination?.route ?: Screen.Home.route
 
                 val currentScreenTitle = when (currentRoute) {
-                    Screen.Home.route -> "Tela inicial"
+                    Screen.Home.route -> "Medição"
                     Screen.Settings.route -> "Configurações"
                     Screen.Historico.route -> "Histórico"
                     else -> "App Ruido"
