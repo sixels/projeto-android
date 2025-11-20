@@ -1,7 +1,7 @@
 package com.example.appruido.data
 
 import android.content.Context
-import com.example.appruido.repository.AudioRepository
+import com.example.appruido.data.AudioRepository
 import com.google.firebase.FirebaseApp
 
 interface AppContainer {

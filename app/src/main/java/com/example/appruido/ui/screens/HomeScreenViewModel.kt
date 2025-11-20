@@ -2,7 +2,7 @@ package com.example.appruido.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.appruido.repository.AudioRepository
+import com.example.appruido.data.AudioRepository
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

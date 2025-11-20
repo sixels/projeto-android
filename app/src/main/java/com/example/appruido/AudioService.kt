@@ -10,7 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
-import com.example.appruido.repository.AudioRepository
+import com.example.appruido.data.AudioRepository
 
 class AudioService : Service() {
 
