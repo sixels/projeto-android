@@ -29,6 +29,7 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,8 +46,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewmodel.compose.viewModel
 import me.bytebeats.views.charts.pie.PieChart
 import me.bytebeats.views.charts.pie.PieChartData
+
 
 
 val cor1Azul = Color(0xFF2196F3)
@@ -54,8 +57,10 @@ val cor2Amarelo = Color(0xFFFFD54F)
 val cor3Laranja = Color(0xFFFFA14F)
 val cor4Vermelho = Color(0xFFF45559)
 @Composable
-fun HistoricoScreen() {
-
+fun HistoricoScreen(
+    viewModel: HistoricoScreenViewModel = viewModel()
+) {
+    val dadosGraficos by viewModel.dadosGrafico.collectAsState()
 
     Column(
         modifier = Modifier
@@ -93,7 +98,7 @@ fun HistoricoScreen() {
                         .clip(RoundedCornerShape(size = 15.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Grafico()
+                    Grafico(dadosGraficos)
                 }
                 Row(
                     modifier = Modifier
@@ -162,19 +167,14 @@ fun HistoricoScreen() {
 }
 
 @Composable
-fun Grafico(){
+fun Grafico(dados: List<PieChartData.Slice>) {
     PieChart(
         pieChartData = PieChartData(
-            slices = listOf(
-                PieChartData.Slice(50.0f,cor1Azul ),
-                PieChartData.Slice(35.0f,cor2Amarelo),
-                PieChartData.Slice(15.0f,cor3Laranja),
-                PieChartData.Slice(5.0f,cor4Vermelho)
-        ),
+            slices = dados
+        )
     )
-    )
-
 }
+
 
 @Composable
 fun ResumoCard(conteudo: @Composable () -> Unit) {
@@ -200,15 +200,13 @@ fun ResumoCard(conteudo: @Composable () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Dropdown_menu(){
+fun Dropdown_menu(viewModel: HistoricoScreenViewModel = viewModel()){
 
     var isExpanded by remember {
         mutableStateOf(value = false)
     }
 
-    var periodo by remember {
-        mutableStateOf(value = "")
-    }
+    val periodo by viewModel.periodoSelecionado.collectAsState()
 
     ExposedDropdownMenuBox(
         expanded = isExpanded,
@@ -239,7 +237,7 @@ fun Dropdown_menu(){
                 text = {
                     Text(text = "Hoje")},
                 onClick = {
-                    periodo = "Hoje"
+                    viewModel.selecionarPeriodo("Hoje")
                     isExpanded = false
                 }
 
@@ -248,7 +246,7 @@ fun Dropdown_menu(){
                 text = {
                     Text(text = "Últimos 7 dias")},
                 onClick = {
-                    periodo = "Últimos 7 dias"
+                    viewModel.selecionarPeriodo("Últimos 7 dias")
                     isExpanded = false
                 }
             )
@@ -256,10 +254,11 @@ fun Dropdown_menu(){
                 text = {
                     Text(text = "Último mês")},
                 onClick = {
-                    periodo = "Último mês"
+                    viewModel.selecionarPeriodo( "Último mês" )
                     isExpanded = false
                 }
             )
         }
     }
 }
+
