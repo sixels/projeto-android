@@ -5,8 +5,6 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
-import com.example.appruido.ui.navigation.Screen
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -25,14 +23,14 @@ interface HistoricoDao {
      * @param dataInicialMilisegundos: O timestamp UNIX do limite inferior do período.
      */
     @Query("""
-        SELECT 
-            tipo, 
-            COUNT(tipo) as contagem 
-        FROM 
-            historico 
-        WHERE 
-            dataHora >= :dataInicialMilisegundos 
-        GROUP BY 
+        SELECT
+            tipo,
+            COUNT(tipo) as contagem
+        FROM
+            historico
+        WHERE
+            dataHora >= :dataInicialMilisegundos
+        GROUP BY
             tipo
     """)
     fun getContagemPorTipo(dataInicialMilisegundos: Long): Flow<List<TipoContagem>>
