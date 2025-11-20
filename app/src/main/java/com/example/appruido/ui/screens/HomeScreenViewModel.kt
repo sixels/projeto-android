@@ -57,7 +57,6 @@ class HomeScreenViewModel(
                 val updated = _history.value.plus(dbValue).takeLast(25)
                 _history.value = updated
 
-                // High noise event detection logic
                 handleNoiseEvent(dbValue)
             }
         }
@@ -81,13 +80,11 @@ class HomeScreenViewModel(
     }
 
     private fun handleNoiseEvent(dbValue: Double) {
-        // CASE 2: Immediate trigger for Extreme noise (>= 100dB)
         if (dbValue >= 80) {
             Log.d(TAG, "noise enter critical: dbValue: $dbValue")
-            // CASE 3 Start/Continue: Noise is High (>= 80dB), but not Extreme.
 
             criticalNoiseState.update(dbValue)
-        } else { // dbValue < 80
+        } else {
             // Nível de barulho caiu.
             if (!criticalNoiseState.isCounting()) {
                 return
@@ -100,7 +97,6 @@ class HomeScreenViewModel(
             Log.d(TAG, "noise leave critical: dbValue: $dbValue, duration: $duration")
 
             if (criticalNoiseState.ellapsedTime() >= 3000 || maxDb >= 100) {
-                // The event was sustained for > 3 seconds. Send it.
                 sendAudioCriticalEvent(maxDb, startedAt)
             }
 
@@ -116,13 +112,10 @@ private class CriticalNoiseState {
 
     fun update(dbValue: Double) {
         if (startTime == null) {
-
-            // This is the start of a potential event
             maxDb = dbValue
             startedAt = Date()
             startTime = System.currentTimeMillis()
         } else {
-            // Event is ongoing, update the max value if needed
             if (dbValue > maxDb) {
                 maxDb = dbValue
             }
