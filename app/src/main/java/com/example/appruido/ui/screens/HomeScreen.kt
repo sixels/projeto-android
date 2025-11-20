@@ -1,6 +1,7 @@
 package com.example.appruido.ui.screens
 
 import android.os.Build
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -59,6 +60,8 @@ fun Home(
     activity: ComponentActivity,
     viewModel: HomeScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
+    val TAG = "Abacus"
+
     val db by viewModel.decibels.collectAsState()
     val history by viewModel.history.collectAsStateWithLifecycle()
     val isRunning by viewModel.isRunning.collectAsState()
@@ -70,6 +73,8 @@ fun Home(
     if (db.isInfinite()) {
         dbMeasure = 0.0
     }
+
+
 
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),

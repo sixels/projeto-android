@@ -23,9 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.appruido.ui.components.GoogleSignInButton
 
-const val TAG = "LoginScreen"
-
-
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,

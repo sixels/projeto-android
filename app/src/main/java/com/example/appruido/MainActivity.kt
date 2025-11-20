@@ -17,7 +17,6 @@ import com.example.appruido.ui.navigation.AppNavHost
 import com.example.appruido.ui.navigation.Screen
 import com.example.appruido.ui.theme.AppRuidoTheme
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
@@ -71,10 +70,12 @@ fun ComponentActivity.hasAudioPermission() =
             android.content.pm.PackageManager.PERMISSION_GRANTED
 
 fun ComponentActivity.requestAudioPermission() {
-    requestPermissions(
-        arrayOf(android.Manifest.permission.RECORD_AUDIO),
-        1001
-    )
+    if (!hasAudioPermission()) {
+        requestPermissions(
+            arrayOf(android.Manifest.permission.RECORD_AUDIO),
+            1001
+        )
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
