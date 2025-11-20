@@ -1,11 +1,14 @@
 package com.example.appruido
 
 import android.app.Application
-import com.google.firebase.FirebaseApp
+import com.example.appruido.data.AppContainer
+import com.example.appruido.data.AppDataContainer
 
 class ApplicationEntrypoint : Application() {
+    lateinit var container: AppContainer
+
     override fun onCreate() {
         super.onCreate()
-        FirebaseApp.initializeApp(this);
+        container = AppDataContainer(this)
     }
 }

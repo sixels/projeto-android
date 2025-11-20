@@ -3,60 +3,48 @@ package com.example.appruido
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
+import androidx.credentials.Credential
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.lifecycle.lifecycleScope
 import com.example.appruido.ui.screens.LoginScreen
 import com.example.appruido.ui.theme.AppRuidoTheme
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
+import com.google.firebase.auth.auth
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+const val TAG = "Ruido_LoginActivity"
 
 class LoginActivity : ComponentActivity() {
 
-    private lateinit var googleSignInClient: GoogleSignInClient
-    private lateinit var firebaseAuth: FirebaseAuth
-    private val TAG = "Ruido_LoginActivity"
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        auth = Firebase.auth
 
-        // Inicia a autenticação do firebase
-        firebaseAuth = Firebase.auth
-        // Configurações de sign-in (solicita ID)
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
+        // Instantiate a Google sign-in request
+        val googleIdOption = GetGoogleIdOption.Builder()
+            // Your server's client ID, not your Android client ID.
+            .setServerClientId(getString(R.string.default_web_client_id))
+            .setFilterByAuthorizedAccounts(false).build()
 
-        Log.d(TAG, "onCreate")
+        val credentialManager = CredentialManager.create(this)
 
-
-        goToMainActivity()
 
         enableEdgeToEdge()
         setContent {
@@ -65,59 +53,70 @@ class LoginActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                 ) { paddingValues ->
                     LoginScreen(
-                        modifier = Modifier.padding(top = 0.dp, bottom = paddingValues.calculateBottomPadding(), start = paddingValues.calculateStartPadding(
-                            LayoutDirection.Ltr
-                        ), end = paddingValues.calculateEndPadding(
-                            LayoutDirection.Ltr
-                        )),
-                        onGoogleSignInSuccess = { firebaseUser ->
-                            {
-                                Log.d(TAG, "Usuário logado: ${firebaseUser.email}")
-                                val token = runBlocking { firebaseUser.getIdToken(true).await() }
-                                firebaseAuthWithGoogle(token.token.toString())
+                        modifier = Modifier.padding(paddingValues), onGoogleSignInClicked = {
+                            // Create the Credential Manager request
+                            val request =
+                                GetCredentialRequest.Builder().addCredentialOption(googleIdOption)
+                                    .build()
+
+                            lifecycleScope.launch {
+                                try {
+                                    val credentialResponse = credentialManager.getCredential(
+                                        request = request,
+                                        context = this@LoginActivity
+                                    )
+                                    handleSignIn(credentialResponse.credential)
+                                } catch (e: Exception) {
+                                    Log.e(TAG, "Error getting credential", e)
+                                }
                             }
-                        },
-                        onGoogleSignInFailure = { exception ->
-                            Log.w(TAG, "Falha no login com Google", exception)
-                            goToMainActivity()
-                        }
-                    )
+
+                        })
                 }
             }
         }
     }
 
-    // Verifica se o usuário já está logado ao iniciar
     override fun onStart() {
         super.onStart()
-        val currentUser = firebaseAuth.currentUser
-        if (currentUser != null) {
-            //Se o usuário estiver logado, vai para a MainActivity
-            Log.d(TAG, "Usuário já logado: ${currentUser.email}")
+        if (auth.currentUser != null) {
             goToMainActivity()
         }
     }
 
-    // Método de autenticação do Firebase com o Google
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        firebaseAuth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
+        auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "Sucesso no login com Firebase")
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    auth.currentUser
                     goToMainActivity()
                 } else {
-                    Log.w(TAG, "Falha no login com Firebase", task.exception)
-                    Toast.makeText(this, "Falha na autenticação.", Toast.LENGTH_SHORT).show()
+                    // If sign in fails, display a message to the user
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
                 }
             }
     }
 
-    // Método para ir pra MainActivity
     private fun goToMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
         finish()
     }
+
+    private fun handleSignIn(credential: Credential) {
+        // Check if credential is of type Google ID
+        if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+            // Create Google ID Token
+            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+
+            // Sign in to Firebase with using the token
+            firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
+        } else {
+            Log.w(TAG, "Credential is not of type Google ID!")
+        }
+    }
 }
+

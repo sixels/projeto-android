@@ -16,14 +16,18 @@ import com.example.appruido.ui.components.MenuScaffold
 import com.example.appruido.ui.navigation.AppNavHost
 import com.example.appruido.ui.navigation.Screen
 import com.example.appruido.ui.theme.AppRuidoTheme
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
-
 
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val auth = Firebase.auth
 
         enableEdgeToEdge()
         setContent {
@@ -39,17 +43,14 @@ class MainActivity : ComponentActivity() {
                     else -> "App Ruido"
                 }
 
-
                 MenuScaffold(
                     navController = navController,
                     currentRoute = currentRoute,
                     currentScreenTitle = currentScreenTitle,
                     onSignOutClicked = {
+                        auth.signOut()
                         val intent = Intent(this, LoginActivity::class.java)
-                        intent.addFlags(
-                            Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                                    Intent.FLAG_ACTIVITY_NEW_TASK
-                        )
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         startActivity(intent)
                         finish()
                     },

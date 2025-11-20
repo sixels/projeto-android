@@ -80,12 +80,19 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.play.services.auth)
-
-
     implementation(libs.bytebeats.compose.charts)
     implementation ("io.github.ehsannarmani:compose-charts:0.2.0")
+
+
+    // Import the BoM for the Firebase platform
+    implementation(platform(libs.firebase.bom))
+
+    // Add the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation(libs.google.firebase.auth)
+
+    // Also add the dependencies for the Credential Manager libraries and specify their versions
+    implementation(libs.androidx.credentials.v130)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
 }

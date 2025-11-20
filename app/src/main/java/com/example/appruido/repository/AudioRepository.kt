@@ -17,7 +17,7 @@ import kotlin.math.log10
 import kotlin.math.sqrt
 
 object AudioRepository {
-    private val TAG = "RUIDO_AudioRepository"
+    private const val TAG = "RUIDO_AudioRepository"
 
     private const val SAMPLE_RATE = 44100
 

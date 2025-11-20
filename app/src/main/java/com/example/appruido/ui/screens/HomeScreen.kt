@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.appruido.AppViewModelProvider
 import com.example.appruido.hasAudioPermission
 import com.example.appruido.requestAudioPermission
 import com.example.appruido.startAudioService
@@ -56,7 +57,7 @@ import kotlin.math.absoluteValue
 fun Home(
     modifier: Modifier = Modifier,
     activity: ComponentActivity,
-    viewModel: HomeScreenViewModel = viewModel(),
+    viewModel: HomeScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val db by viewModel.decibels.collectAsState()
     val history by viewModel.history.collectAsStateWithLifecycle()

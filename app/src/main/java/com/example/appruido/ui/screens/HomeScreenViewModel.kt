@@ -13,13 +13,11 @@ import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 class
-HomeScreenViewModel : ViewModel() {
-
-
+HomeScreenViewModel(audioRepository: AudioRepository) : ViewModel() {
     @OptIn(FlowPreview::class)
     val decibels: StateFlow<Double> =
-        AudioRepository.decibels
-            .sample(300)
+        audioRepository.decibels
+            .sample(333)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(),
@@ -49,7 +47,7 @@ HomeScreenViewModel : ViewModel() {
     }
 
 
-    private val _isRunning = MutableStateFlow(AudioRepository.isRecording)
+    private val _isRunning = MutableStateFlow(audioRepository.isRecording)
     val isRunning: StateFlow<Boolean> = _isRunning
 
     fun setIsRunning(value: Boolean) {
