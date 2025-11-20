@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 
     id("com.google.gms.google-services")
+
+    id("com.google.devtools.ksp") version "2.2.21-2.0.4"
 }
 
 android {
@@ -97,4 +99,10 @@ dependencies {
     implementation(libs.googleid)
 
     implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
+
+    //Room
+    implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
+    ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
+    implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
+
 }
