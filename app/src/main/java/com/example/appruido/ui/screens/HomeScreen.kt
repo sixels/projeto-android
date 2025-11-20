@@ -79,9 +79,9 @@ fun Home(
         Button(
             onClick = {
                 if (!isRunning) {
-                    if (!activity.hasAudioPermission()) {
-                        activity.requestAudioPermission()
-                    } else {
+                    activity.requestAudioPermission()
+
+                    if (activity.hasAudioPermission()) {
                         activity.startAudioService()
                         viewModel.setIsRunning(true)
                     }

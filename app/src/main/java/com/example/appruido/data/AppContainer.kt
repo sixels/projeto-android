@@ -1,13 +1,11 @@
 package com.example.appruido.data
 
 import android.content.Context
-import com.example.appruido.data.AudioRepository
-import com.google.firebase.FirebaseApp
 
 interface AppContainer {
     val audioRepository: AudioRepository
 
-    val firebaseRepository: Unit
+    val criticalNoiseRepository: CriticalNoiseRepository
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
@@ -15,8 +13,9 @@ class AppDataContainer(private val context: Context) : AppContainer {
         AudioRepository
     }
 
-    override val firebaseRepository by lazy {
-        FirebaseApp.initializeApp(context);
-        Unit
+    override val criticalNoiseRepository by lazy {
+        CriticalNoiseFirestoreRepository(
+            CriticalNoiseDatabase.getInstance().criticalNoiseDao
+        )
     }
 }

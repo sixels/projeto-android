@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.appruido"
-        minSdk = 24
+        minSdk = 28
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -95,4 +95,6 @@ dependencies {
     implementation(libs.androidx.credentials.v130)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+
+    implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
 }

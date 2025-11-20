@@ -2,6 +2,7 @@ package com.example.appruido.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.appruido.data.CriticalNoiseRepository
 import com.example.appruido.data.AudioRepository
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,17 +13,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
-class
-HomeScreenViewModel(audioRepository: AudioRepository) : ViewModel() {
+class HomeScreenViewModel(
+    val audioRepository: AudioRepository, val criticalNoiseRepository: CriticalNoiseRepository
+) : ViewModel() {
     @OptIn(FlowPreview::class)
-    val decibels: StateFlow<Double> =
-        audioRepository.decibels
-            .sample(333)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = 0.0
-            )
+    val decibels: StateFlow<Double> = audioRepository.decibels.sample(333).stateIn(
+            scope = viewModelScope, started = SharingStarted.WhileSubscribed(), initialValue = 0.0
+        )
 
     private val _history = MutableStateFlow<List<Double>>(emptyList())
     val history: StateFlow<List<Double>> = _history
@@ -37,9 +34,7 @@ HomeScreenViewModel(audioRepository: AudioRepository) : ViewModel() {
                 }
 
 
-                val updated = _history.value
-                    .plus(dbValue)
-                    .takeLast(25)
+                val updated = _history.value.plus(dbValue).takeLast(25)
 
                 _history.value = updated
             }

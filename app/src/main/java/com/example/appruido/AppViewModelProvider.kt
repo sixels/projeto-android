@@ -10,7 +10,8 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             HomeScreenViewModel(
-                application().container.audioRepository
+                audioRepository = application().container.audioRepository,
+                criticalNoiseRepository =  application().container.criticalNoiseRepository,
             )
         }
 
