@@ -1,18 +1,11 @@
 package com.example.appruido.ui.screens
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.example.appruido.data.HistoricoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import androidx.compose.ui.graphics.Color
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import me.bytebeats.views.charts.pie.PieChartData
 
-class HistoricoScreenViewModel : ViewModel() {
+class HistoricoScreenViewModel(historicoRepository: HistoricoRepository) : ViewModel() {
     private val _dadosGrafico = MutableStateFlow(
         listOf(
             PieChartData.Slice(50f, cor1Azul),

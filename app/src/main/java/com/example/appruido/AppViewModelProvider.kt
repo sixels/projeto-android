@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.appruido.ui.screens.HistoricoScreenViewModel
 import com.example.appruido.ui.screens.HomeScreenViewModel
 
 object AppViewModelProvider {
@@ -12,6 +13,12 @@ object AppViewModelProvider {
             HomeScreenViewModel(
                 audioRepository = application().container.audioRepository,
                 criticalNoiseRepository =  application().container.criticalNoiseRepository,
+            )
+        }
+
+        initializer {
+            HistoricoScreenViewModel(
+                historicoRepository = application().container.historicoRepository
             )
         }
 
