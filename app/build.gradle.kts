@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp") version "2.2.21-2.0.4"
 
     id("com.google.gms.google-services")
 }
@@ -95,4 +96,8 @@ dependencies {
     implementation(libs.androidx.credentials.v130)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+    //Room
+    implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
+    ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
+    implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
 }
