@@ -9,5 +9,7 @@ data class CriticalNoise(
     val endedAt: Date? = null,
     @ServerTimestamp
     val startedAt: Date? = null,
-    val userId: String = ""
+    val userId: String = "",
+
+    val level: NoiseLevel = getNoiseLevel(average),
 )
