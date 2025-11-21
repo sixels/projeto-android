@@ -35,7 +35,7 @@ fun AppNavHost(
             HistoricoScreen()
         }
         composable(Screen.Settings.route) {
-            SettingsScreen()
+            SettingsScreen(activity = activity)
         }
     }
 }
