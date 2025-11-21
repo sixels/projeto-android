@@ -7,4 +7,5 @@ data class TipoContagem(
      */
     val tipo: Float,        // Corresponde ao campo 'tipo' agrupado (1, 2, 3 ou 4)
     val contagem: Float     // Corresponde ao alias 'contagem' da função COUNT(tipo)
+    //Tipos: 1f - Baixo, 2f- Moderado- 3f Perigoso, 4f-extremamente perigoso
 )
