@@ -14,6 +14,8 @@ import com.example.appruido.data.AudioRepository
 
 class AudioService : Service() {
 
+    private lateinit var audioRepository: AudioRepository
+
     companion object {
         private const val CHANNEL_ID = "audio_service_channel"
         private const val NOTIFICATION_ID = 1001
@@ -21,18 +23,19 @@ class AudioService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        audioRepository = (application as ApplicationEntrypoint).container.audioRepository
         createNotificationChannel()
     }
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_ID, buildNotification())
-        AudioRepository.start()
+        audioRepository.start()
         return START_STICKY
     }
 
     override fun onDestroy() {
-        AudioRepository.stop()
+        audioRepository.stop()
         super.onDestroy()
     }
 

@@ -10,32 +10,43 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.log10
 import kotlin.math.sqrt
 
-object AudioRepository {
-    private const val TAG = "RUIDO_AudioRepository"
+class AudioRepository(private val settingsRepository: SettingsRepository) {
+    private val TAG = "RUIDO_AudioRepository"
 
-    private const val SAMPLE_RATE = 22050
-    private const val FIXED_CALIBRATION_OFFSET = 90.0
-
+    private val SAMPLE_RATE = 22050
+    private val FIXED_CALIBRATION_OFFSET = 90.0
 
     private val _decibels = MutableStateFlow(0.0)
-    val decibels: StateFlow<Double> = _decibels
-    val isRecording: Boolean
-        get() = recordJob != null
+    val decibels: StateFlow<Double> = _decibels.asStateFlow()
 
+    private val _isRecording = MutableStateFlow(false)
+    val isRecording: StateFlow<Boolean> = _isRecording.asStateFlow()
 
     private var _calibrationOffset = FIXED_CALIBRATION_OFFSET
 
     private var recordJob: Job? = null
     private var audioRecord: AudioRecord? = null
 
+    init {
+        // Carrega a calibração inicial do banco de dados
+        CoroutineScope(Dispatchers.IO).launch {
+            val settings = settingsRepository.getSettings().first()
+            settings?.let {
+                adjustCalibration(it.calibration)
+            }
+        }
+    }
+
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     fun start() {
-        if (recordJob != null) return
+        if (_isRecording.value) return
 
         val minBufferSize = AudioRecord.getMinBufferSize(
             SAMPLE_RATE,
@@ -52,11 +63,13 @@ object AudioRepository {
         )
 
         if (recorder.state != AudioRecord.STATE_INITIALIZED) {
+            _isRecording.value = false
             throw IllegalStateException("AudioRecord initialization failed")
         }
 
         audioRecord = recorder
         recorder.startRecording()
+        _isRecording.value = true
 
         recordJob = CoroutineScope(Dispatchers.IO).launch {
             val buffer = ShortArray(minBufferSize)
@@ -65,16 +78,9 @@ object AudioRepository {
                 val read = recorder.read(buffer, 0, buffer.size)
                 if (read > 0) {
                     val rms = calculateRms(buffer, read)
-
-                    // O valor máximo de um Short (16-bit) é 32767.0
-                    // dBFS = 20 * log10(RMS / MAX_POSSIBLE_AMPLITUDE)
-                    // O resultado será negativo (ex: -20 dBFS, -6 dBFS)
                     val dbFS = if (rms > 0) 20 * log10(rms / 32767.0) else -120.0
-
-                    // Converter para SPL
                     var dbSPL = dbFS + _calibrationOffset
 
-                    // Não mostrar valores negativos em silêncio absoluto
                     if (dbSPL < 0) dbSPL = 0.0
 
                     _decibels.value = dbSPL
@@ -90,16 +96,19 @@ object AudioRepository {
         audioRecord?.apply {
             try {
                 stop()
-            } catch (_: Exception) {}
+            } catch (_: Exception) {
+            }
             release()
         }
 
         audioRecord = null
         _decibels.value = 0.0
+        _isRecording.value = false
     }
 
     fun adjustCalibration(value: Double) {
-        _calibrationOffset = FIXED_CALIBRATION_OFFSET + value
+        // CORREÇÃO: Define o valor em vez de somar
+        _calibrationOffset += value
     }
 
     private fun calculateRms(buffer: ShortArray, len: Int): Double {

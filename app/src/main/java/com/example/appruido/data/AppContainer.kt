@@ -4,29 +4,32 @@ import android.content.Context
 
 interface AppContainer {
     val audioRepository: AudioRepository
-
     val criticalNoiseRepository: CriticalNoiseRepository
-
     val historicoRepository: HistoricoRepository
+    val settingsRepository: SettingsRepository
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
 
-    private val historicoDatabase: HistoricoDatabase by lazy {
-        HistoricoDatabase.getDatabase(context)
+    private val appDatabase: AppDatabase by lazy {
+        AppDatabase.getDatabase(context)
+    }
 
-    }
-    // Implementa o Repositório usando o DAO do banco de dados (HistoricoDao)
     override val historicoRepository: HistoricoRepository by lazy {
-        OfflineHistoricoRepository(historicoDatabase.historicoDao())
+        OfflineHistoricoRepository(appDatabase.historicoDao())
     }
+
     override val audioRepository: AudioRepository by lazy {
-        AudioRepository
+        AudioRepository(settingsRepository)
     }
 
     override val criticalNoiseRepository by lazy {
         CriticalNoiseFirestoreRepository(
             CriticalNoiseDatabase.getInstance().criticalNoiseDao
         )
+    }
+
+    override val settingsRepository: SettingsRepository by lazy {
+        OfflineSettingsRepository(appDatabase.settingsDao())
     }
 }

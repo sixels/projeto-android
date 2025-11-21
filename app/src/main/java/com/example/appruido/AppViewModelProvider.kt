@@ -26,7 +26,8 @@ object AppViewModelProvider {
 
         initializer {
             SettingsScreenViewModel(
-                audioRepository = application().container.audioRepository
+                audioRepository = application().container.audioRepository,
+                settingsRepository = application().container.settingsRepository
             )
         }
 

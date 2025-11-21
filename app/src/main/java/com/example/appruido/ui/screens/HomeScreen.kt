@@ -1,7 +1,6 @@
 package com.example.appruido.ui.screens
 
 import android.os.Build
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -37,8 +36,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.appruido.AppViewModelProvider
 import com.example.appruido.hasAudioPermission
 import com.example.appruido.requestAudioPermission
-import com.example.appruido.startAudioService
-import com.example.appruido.stopAudioService
 import com.example.appruido.ui.components.Gauge
 import ir.ehsannarmani.compose_charts.LineChart
 import ir.ehsannarmani.compose_charts.models.AnimationMode
@@ -60,21 +57,18 @@ fun Home(
     activity: ComponentActivity,
     viewModel: HomeScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
-    val TAG = "Abacus"
-
     val db by viewModel.decibels.collectAsState()
     val history by viewModel.history.collectAsStateWithLifecycle()
-    val isRunning by viewModel.isRunning.collectAsState()
+    // O estado agora vem da fonte da verdade (repositório)
+    val isRunning by viewModel.isRunning.collectAsStateWithLifecycle()
 
     val primaryColor = MaterialTheme.colorScheme.primary
     val foreColor = MaterialTheme.colorScheme.onBackground
 
     var dbMeasure = db.absoluteValue
-    if (db.isInfinite()) {
+    if (db.isInfinite() || db.isNaN()) {
         dbMeasure = 0.0
     }
-
-
 
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),
@@ -87,12 +81,12 @@ fun Home(
                     if (!activity.hasAudioPermission()) {
                         activity.requestAudioPermission()
                     } else {
-                        activity.startAudioService()
-                        viewModel.setIsRunning(true)
+                        // Apenas inicia. O ViewModel e a UI reagirão.
+                        viewModel.audioRepository.start()
                     }
                 } else {
-                    activity.stopAudioService()
-                    viewModel.setIsRunning(false)
+                    // Apenas para. O ViewModel e a UI reagirão.
+                    viewModel.audioRepository.stop()
                 }
             }
         ) {
@@ -123,12 +117,8 @@ fun Home(
             animationDelay = 0,
             minValue = 0.0,
             maxValue = 120.0,
-            animationMode = AnimationMode.Together(delayBuilder = {
-                0
-            }),
-            labelHelperProperties = LabelHelperProperties(
-                enabled = false,
-            ),
+            animationMode = AnimationMode.Together(delayBuilder = { 0 }),
+            labelHelperProperties = LabelHelperProperties(enabled = false),
             labelProperties = LabelProperties(enabled = false),
             indicatorProperties = HorizontalIndicatorProperties(
                 enabled = true,
@@ -185,11 +175,11 @@ fun GaugeMeter(measure: Double) {
     )
 
     val label = when {
-        animatedValue >= 100 -> "Extremo";
-        animatedValue >= 65 -> "Perigo";
-        animatedValue >= 35 -> "Moderado";
-        animatedValue > 0 -> "Baixo";
-        else -> "";
+        animatedValue >= 100 -> "Extremo"
+        animatedValue >= 65 -> "Perigo"
+        animatedValue >= 35 -> "Moderado"
+        animatedValue > 0 -> "Baixo"
+        else -> ""
     }
 
 
