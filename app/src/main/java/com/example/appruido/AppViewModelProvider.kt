@@ -13,6 +13,7 @@ object AppViewModelProvider {
             HomeScreenViewModel(
                 audioRepository = application().container.audioRepository,
                 criticalNoiseRepository =  application().container.criticalNoiseRepository,
+                historicoRepository = application().container.historicoRepository
             )
         }
 

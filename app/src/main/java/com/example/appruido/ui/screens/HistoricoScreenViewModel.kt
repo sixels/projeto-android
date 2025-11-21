@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import me.bytebeats.views.charts.pie.PieChartData
 
 class HistoricoScreenViewModel(historicoRepository: HistoricoRepository) : ViewModel() {
+    //Precisa fazer o dadosGrafico receber os dados do banco do Historico:
     private val _dadosGrafico = MutableStateFlow(
         listOf(
             PieChartData.Slice(50f, cor1Azul),

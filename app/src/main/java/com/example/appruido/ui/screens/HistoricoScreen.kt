@@ -80,7 +80,7 @@ fun HistoricoScreen(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(bottom = 16.dp) // Padding na parte inferior da área rolável
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
             // ---  LISTA ROLÁVEL:  ---
             item {
@@ -111,50 +111,35 @@ fun HistoricoScreen(
 
                 }
             }
-            item {
+            item {//Card para mostrar dados do bd interno:
                 ResumoCard {
                     Text(
                         text = buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("Aceitável: ")
+                                append("Valor máximo: ")
                             }
-                            append("Até 50 db")
+                            append("aqui insira valor maximo do periodo")
                             append("\n")
 
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("Moderado: ")
+                                append("Valor minimo: ")
                             }
-                            append("56-85db")
-                            append("\n")
-                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("Crítico: ")
-                            }
-                            append("A cima de 85db")
-                            append("\n")
-                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("Média diária recomendada: ")
-                            }
-                            append("Abaixo de 70 db")
                         }
                     )
                 }
             }
-            item {
+            item { //Card para mostrar dados vindo do bd do firebase
                 ResumoCard {
                     Text(text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Média diária: ")
+                            append("Media de valores criticos e tempo: ")
                         }
-                        append("65 db - Atenção! Está perto do limite")
+                        append("Apresenta perigo caso essa media e esse valores estejam no intervalo da tabela de perigo")
                     }
                     )
                 }
             }
-            item {
-                ResumoCard {
-                    Text(text = "Outras análise de tempo de exposição diária a riscos críticos, porcentagem semanal/diaria/mensal, recomendação final")
-                }
-            }
+
         }
     }
 }

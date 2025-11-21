@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.appruido.data.AudioRepository
 import com.example.appruido.data.CriticalNoise
 import com.example.appruido.data.CriticalNoiseRepository
+import com.example.appruido.data.HistoricoEntity
+import com.example.appruido.data.HistoricoRepository
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.FlowPreview
@@ -21,8 +23,15 @@ import kotlin.math.absoluteValue
 
 
 class HomeScreenViewModel(
-    val audioRepository: AudioRepository, val criticalNoiseRepository: CriticalNoiseRepository
+    val audioRepository: AudioRepository, val criticalNoiseRepository: CriticalNoiseRepository,
+    private val historicoRepository: HistoricoRepository
 ) : ViewModel() {
+    
+
+    //Para armazenar valor de db em 1 minuto:
+    private val _decibelsList = mutableListOf<Double>()
+    private var _lastInsertTime = System.currentTimeMillis()
+    private val ONE_MINUTE_IN_MILLIS = 60000L // 60 segundos * 1000 ms/s
 
     private val TAG: String = "HomeScreenViewModel"
 
@@ -58,6 +67,25 @@ class HomeScreenViewModel(
                 _history.value = updated
 
                 handleNoiseEvent(dbValue)
+
+                // Lógica para armazenar média dos db a cada 1 minuto:
+                _decibelsList.add(dbValue)
+                val currentTime = System.currentTimeMillis()
+                if (currentTime - _lastInsertTime >= ONE_MINUTE_IN_MILLIS) {
+                    // Calcula média:
+                    val averageDb = if (_decibelsList.isNotEmpty()) {
+                        _decibelsList.average().toFloat()
+                    } else {
+                        0f
+                    }
+                    // Salva no BD interno de historico:
+                    if (averageDb > 0) {
+                        insertHistorico(averageDb, _lastInsertTime)
+                    }
+                    _decibelsList.clear()//Reseta lista
+                    _lastInsertTime = currentTime
+                    Log.d(TAG, "Histórico inserido. Média DB: $averageDb")
+                }
             }
         }
     }
@@ -103,6 +131,31 @@ class HomeScreenViewModel(
             criticalNoiseState.reset()
         }
     }
+    //Função para inserir dados historico:
+    private fun insertHistorico(averageDecibels: Float, timestamp: Long) {
+
+        val tipo = when {
+            averageDecibels <= 35f -> 1f          // Baixo
+            averageDecibels <= 65f -> 2f          // Moderado
+            averageDecibels <= 100f -> 3f         // Perigo
+            else -> 4f                            // Extremo  Perigo
+        }
+
+        val historico = HistoricoEntity(
+            decibeis = averageDecibels,
+            dataHora = timestamp,
+            tipo = tipo
+        )
+        viewModelScope.launch {
+            try {
+                historicoRepository.insertHistorico(historico)
+                Log.d(TAG, "HistoricoEntity inserido: $historico")
+            } catch (e: Exception) {
+                Log.e(TAG, "Erro ao inserir HistoricoEntity: ${e.message}")
+            }
+        }
+    }
+
 }
 
 private class CriticalNoiseState {
@@ -145,4 +198,7 @@ private class CriticalNoiseState {
         startedAt = null
         startTime = null
     }
+
+
+
 }
