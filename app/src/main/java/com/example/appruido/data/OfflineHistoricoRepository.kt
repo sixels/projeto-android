@@ -14,5 +14,7 @@ class OfflineHistoricoRepository(private val historicoDao: HistoricoDao) : Histo
     override suspend fun deleteHistorico(historico: HistoricoEntity) =
         historicoDao.delete(historico)
 
-
+    override fun getAllHistorico(): Flow<List<HistoricoEntity>> {
+        return historicoDao.getAllHistorico()
+    }
 }

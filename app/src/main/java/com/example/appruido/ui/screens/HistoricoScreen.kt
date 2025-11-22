@@ -1,242 +1,234 @@
 package com.example.appruido.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.appruido.AppViewModelProvider
+import com.example.appruido.ApplicationEntrypoint // <--- IMPORTANTE: O import da sua classe
+import com.example.appruido.data.HistoricoEntity
 import me.bytebeats.views.charts.pie.PieChart
 import me.bytebeats.views.charts.pie.PieChartData
+import me.bytebeats.views.charts.pie.render.SimpleSliceDrawer
+import java.text.SimpleDateFormat
+import java.util.*
 
-
-val cor1Azul = Color(0xFF2196F3)
-val cor2Amarelo = Color(0xFFFFD54F)
-val cor3Laranja = Color(0xFFFFA14F)
-val cor4Vermelho = Color(0xFFF45559)
 @Composable
-fun HistoricoScreen(
-    viewModel: HistoricoScreenViewModel = viewModel(factory = AppViewModelProvider.Factory)
-) {
-    val dadosGraficos by viewModel.dadosGrafico.collectAsState()
+fun HistoricoScreen() {
+    val context = LocalContext.current
 
+    // --- A CORREÇÃO DO BANCO DE DADOS ---
+    // Aqui pegamos a instância do aplicativo que já está rodando
+    val application = context.applicationContext as ApplicationEntrypoint
+
+    // E pegamos o repositório DE LÁ (o mesmo que a Home usa)
+    val repositorio = application.container.historicoRepository
+
+    // Injeta esse repositório "compartilhado" no ViewModel
+    val viewModel: HistoricoScreenViewModel = viewModel(
+        factory = HistoricoViewModelFactory(repositorio)
+    )
+
+    // Coleta os dados
+    val listaHistorico by viewModel.listaHistorico.collectAsState()
+    val dadosGrafico by viewModel.dadosGrafico.collectAsState()
+    val periodoSelecionado by viewModel.periodoSelecionado.collectAsState()
+
+    // --- O Visual (Gráfico + Lista) ---
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp), // Padding lateral para a tela
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 10.dp),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(15.dp)
-            ) {
-                Text(text = "Selecione o período que deseja:", fontSize = 18.sp)
-                Dropdown_menu() //caixa opções periodo
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        // Grafico e info historico:
+        Text(
+            text = "Histórico de Ruído",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
         LazyColumn(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(bottom = 16.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize()
         ) {
-            // ---  LISTA ROLÁVEL:  ---
+            // 1. O CARTÃO DO GRÁFICO
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(size = 15.dp)),
-                    contentAlignment = Alignment.Center
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                 ) {
-                    Grafico(dadosGraficos)
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 10.dp),
-                    horizontalArrangement = Arrangement.Start
-                ){
                     Column(
-
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("Intervalos de níveis de decibeis:")
-                        Text("Baixo: 0db - 35db", color = cor1Azul)
-                        Text("Moderado: 35db - 65db", color = cor2Amarelo)
-                        Text("Perigo: 65dp - 100db ", color = cor3Laranja)
-                        Text("Extremo perigo: 100db - 120db ", color = cor4Vermelho)
-                    }
-
-                }
-            }
-            item {//Card para mostrar dados do bd interno:
-                ResumoCard {
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("Valor máximo: ")
-                            }
-                            append("aqui insira valor maximo do periodo")
-                            append("\n")
-
-                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("Valor minimo: ")
-                            }
+                        // Cabeçalho (Título + Dropdown)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Distribuição", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            MenuPeriodo(periodoSelecionado) { viewModel.selecionarPeriodo(it) }
                         }
-                    )
-                }
-            }
-            item { //Card para mostrar dados vindo do bd do firebase
-                ResumoCard {
-                    Text(text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Media de valores criticos e tempo: ")
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        // Desenho do Gráfico
+                        if (dadosGrafico.isNotEmpty()) {
+                            PieChart(
+                                pieChartData = PieChartData(slices = dadosGrafico),
+                                modifier = Modifier.size(200.dp),
+                                sliceDrawer = SimpleSliceDrawer(sliceThickness = 25f)
+                            )
+                        } else {
+                            Text("Sem dados neste período", color = Color.Gray)
                         }
-                        append("Apresenta perigo caso essa media e esse valores estejam no intervalo da tabela de perigo")
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
-                    )
                 }
             }
 
+            // 2. TÍTULO DA LISTA
+            item {
+                Text(
+                    "Registros Recentes",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+
+            // 3. A LISTA DE DADOS
+            if (listaHistorico.isEmpty()) {
+                item {
+                    Text("Nenhum dado encontrado.", color = Color.Gray)
+                }
+            } else {
+                items(listaHistorico) { item ->
+                    ItemHistorico(historico = item)
+                }
+            }
         }
     }
 }
 
 @Composable
-fun Grafico(dados: List<PieChartData.Slice>) {
-    PieChart(
-        pieChartData = PieChartData(
-            slices = dados
-        )
-    )
-}
+fun MenuPeriodo(periodoAtual: String, onPeriodoChange: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val opcoes = listOf("24h", "7d", "30d")
 
-
-@Composable
-fun ResumoCard(conteudo: @Composable () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 4.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    ) {
+    Box {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp) // Padding dentro do card
+                .clip(RoundedCornerShape(8.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
+                .clickable { expanded = true }
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            conteudo()
+            Text(
+                text = when(periodoAtual) {
+                    "24h" -> "Últimas 24h"
+                    "7d" -> "7 Dias"
+                    "30d" -> "30 Dias"
+                    else -> periodoAtual
+                },
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = null,
+                modifier = Modifier.padding(start = 4.dp),
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+        ) {
+            opcoes.forEach { opcao ->
+                DropdownMenuItem(
+                    text = {
+                        Text(when(opcao) {
+                            "24h" -> "Últimas 24h"
+                            "7d" -> "Últimos 7 Dias"
+                            "30d" -> "Últimos 30 Dias"
+                            else -> opcao
+                        })
+                    },
+                    onClick = { onPeriodoChange(opcao); expanded = false }
+                )
+            }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Dropdown_menu(viewModel: HistoricoScreenViewModel = viewModel()){
-
-    var isExpanded by remember {
-        mutableStateOf(value = false)
+fun ItemHistorico(historico: HistoricoEntity) {
+    val (cor, textoGravidade) = when (historico.tipo) {
+        1f -> Color(0xFF4CAF50) to "Baixo"
+        2f -> Color(0xFFFFC107) to "Moderado"
+        3f -> Color(0xFFFF9800) to "Perigo"
+        4f -> Color(0xFFF44336) to "Extremo"
+        else -> Color.Gray to "Desconhecido"
     }
 
-    val periodo by viewModel.periodoSelecionado.collectAsState()
-
-    ExposedDropdownMenuBox(
-        expanded = isExpanded,
-        onExpandedChange = { isExpanded = it }
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        modifier = Modifier.fillMaxWidth()
     ) {
-        TextField(
-            value = periodo,
-            onValueChange = {},
-            readOnly = true,
-            singleLine = true,
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-            },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
-            ),
-            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                .width(180.dp)
-
-        )
-
-        ExposedDropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false }
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            DropdownMenuItem(
-                text = {
-                    Text(text = "Hoje")},
-                onClick = {
-                    viewModel.selecionarPeriodo("Hoje")
-                    isExpanded = false
-                }
-
-            )
-            DropdownMenuItem(
-                text = {
-                    Text(text = "Últimos 7 dias")},
-                onClick = {
-                    viewModel.selecionarPeriodo("Últimos 7 dias")
-                    isExpanded = false
-                }
-            )
-            DropdownMenuItem(
-                text = {
-                    Text(text = "Último mês")},
-                onClick = {
-                    viewModel.selecionarPeriodo( "Último mês" )
-                    isExpanded = false
-                }
-            )
+            Column {
+                Text(
+                    text = String.format("%.1f dB", historico.decibeis),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = formatarData(historico.dataHora),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Surface(color = cor, shape = MaterialTheme.shapes.small) {
+                Text(
+                    text = textoGravidade,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }
 
+fun formatarData(timestamp: Long): String {
+    val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    return sdf.format(Date(timestamp))
+}

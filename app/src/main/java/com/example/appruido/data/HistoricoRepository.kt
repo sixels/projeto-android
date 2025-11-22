@@ -10,5 +10,5 @@ interface HistoricoRepository {
 
     suspend fun  deleteHistorico(historico: HistoricoEntity)
 
-
+    fun getAllHistorico(): Flow<List<HistoricoEntity>>
 }

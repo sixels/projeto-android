@@ -20,8 +20,7 @@ object AppViewModelProvider {
 
         initializer {
             HistoricoScreenViewModel(
-                historicoRepository = application().container.historicoRepository
-            )
+                repository = application().container.historicoRepository)
         }
 
         initializer {

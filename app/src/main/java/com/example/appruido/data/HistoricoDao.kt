@@ -34,4 +34,7 @@ interface HistoricoDao {
             tipo
     """)
     fun getContagemPorTipo(dataInicialMilisegundos: Long): Flow<List<TipoContagem>>
+
+    @Query("SELECT * FROM historico ORDER BY dataHora DESC")
+    fun getAllHistorico(): Flow<List<HistoricoEntity>>
 }
