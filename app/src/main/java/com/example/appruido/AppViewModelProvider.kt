@@ -20,7 +20,8 @@ object AppViewModelProvider {
 
         initializer {
             HistoricoScreenViewModel(
-                repository = application().container.historicoRepository)
+                historicoRepository = application().container.historicoRepository, criticalNoiseRepository = application().container.criticalNoiseRepository
+            )
         }
 
         initializer {
