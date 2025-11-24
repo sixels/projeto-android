@@ -52,7 +52,7 @@ class HomeScreenViewModel(
     private var _lastInsertTime = System.currentTimeMillis()
 
     // Tempo para salvar automático (1 minuto padrão)
-    private val SAVE_INTERVAL_MILLIS = 60000L // 60s * 1000ms
+    private val minutoEmMs = 60000L // 60s * 1000ms
     // Variáveis de pico de ruído
     private var highNoiseEventStartTime: Long? = null
     private var highNoiseEventMaxDb: Double = 0.0
@@ -73,11 +73,11 @@ class HomeScreenViewModel(
                     handleNoiseEvent(dbValue)
                     _decibelsList.add(dbValue)
 
-                    // Salvamento automático por tempo
+                    // Salvamento automático por tempo, salva a cada 1 min
                     val currentTime = System.currentTimeMillis()
-                    if (currentTime - _lastInsertTime >= SAVE_INTERVAL_MILLIS) {
+                    if (currentTime - _lastInsertTime >= minutoEmMs) {
                         Log.e(TAG, "Tempo limite atingido. Salvando parcial...")
-                        salvarBuffer(currentTime)
+                        salvaDadosHistorico(currentTime)
                     }
                 }
             }
@@ -91,7 +91,7 @@ class HomeScreenViewModel(
                     Log.e(TAG, "Botão Parar detectado. Dados na memória: ${_decibelsList.size}")
 
                     if (_decibelsList.isNotEmpty()) {
-                        salvarBuffer(System.currentTimeMillis())
+                        salvaDadosHistorico(System.currentTimeMillis())
                     } else {
                         Log.e(TAG, "Lista vazia. Nada para salvar.")
                     }
@@ -110,8 +110,8 @@ class HomeScreenViewModel(
         }
     }
 
-    // Função blindada contra cancelamento de tela
-    private fun salvarBuffer(timestamp: Long) {
+    // Função para salvar no banco de dados local
+    private fun salvaDadosHistorico(timestamp: Long) {
         if (_decibelsList.isEmpty()) return
 
         val averageDb = _decibelsList.average().toFloat()
@@ -188,8 +188,5 @@ class HomeScreenViewModel(
                 Log.e(TAG, "Erro ao salvar Ruido Critico: ${e.message}")
             }
         }
-    }
-
-    private fun insertHistorico(averageDecibels: Float, timestamp: Long) {
     }
 }
